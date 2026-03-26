@@ -3,8 +3,8 @@ from context import *
 from vector import printVector, randomVector, cloneVector, vectorCost as fitness
 
 
-POP_SIZE = 200
-GENERATIONS = 200
+POP_SIZE = 100
+GENERATIONS = 100
 
 MUTATION_PROB = 0.05
 
@@ -15,11 +15,17 @@ MUTATION_PROB = 0.05
 def mutate(child):
     # flip a random staff assignment for a random project row
     new_child = cloneVector(child)
-    
-    projectId = random.randint(0, len(new_child) - 1)
-    row = [0] * len(STAFF_LIST)
-    row[random.randint(0, len(STAFF_LIST) - 1)] = 1
-    new_child[projectId] = row
+
+    # flip a random row
+    row = random.randrange(len(new_child))
+    new_child[row] = new_child[row][::-1]
+
+
+    # flip 2 random bits
+    for _ in range(2):
+        i = random.randrange(len(new_child))
+        j = random.randrange(len(new_child[0]))
+        new_child[i][j] ^= 1
 
     return new_child
 
@@ -28,7 +34,8 @@ def mutate(child):
 
 
 def crossover(parent_a, parent_b):
-    cross_point = random.randint(1, len(parent_a) - 1)
+    # combine two parents vectors
+    cross_point = random.randint(1, len(parent_a) - 2)
 
     return cloneVector(parent_a[:cross_point]) + cloneVector(parent_b[cross_point:])
 
@@ -51,12 +58,12 @@ def tournament_selection(population, size=5):
 ##############################################################
 
 
-def genetic_algorithm(quickFinish=True, quiet=False):
+def genetic_algorithm(generations=GENERATIONS, popSize=POP_SIZE, quickFinish=True, quiet=False):
     '''
     main genetic algorithm function. This returns the best solution found using global constant variables POP_SIZE and GENERATIONS. 
     If quickFinish is enabled this will output when/if it reaches an optimal answer.
     '''
-    population = [randomVector() for _ in range(POP_SIZE)]
+    population = [randomVector(smart=False) for _ in range(popSize)]
 
     avg_costs = []
     best_costs = []
@@ -64,7 +71,7 @@ def genetic_algorithm(quickFinish=True, quiet=False):
     
     gen = 0
     finish = False
-    while gen < GENERATIONS and not finish:
+    while gen < generations and not finish:
         # for graphing
         costs = [fitness(i) for i in population]
         avg_costs += [sum(costs) / len(costs)]
@@ -76,7 +83,7 @@ def genetic_algorithm(quickFinish=True, quiet=False):
         best = min(population, key=lambda x: fitness(x))
         new_population += [cloneVector(best)]
 
-        for _ in range(POP_SIZE - 1):
+        for _ in range(popSize - 1):
             p_a, p_b = tournament_selection(population)
             child = crossover(p_a, p_b)
 

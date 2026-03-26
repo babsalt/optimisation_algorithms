@@ -8,10 +8,10 @@ uses a 3d vector of bits such that `vector[projectId][staffId]` equals `1` if th
 # example with 4 projects and 5 staff members
 
 vector = [
-    [0, 1, 0, 0, 0],   # P1 -> S2
-    [0, 1, 0, 1, 0],   # P2 -> S2, S4 (over assigned)
-    [1, 0, 0, 0, 0],   # P3 -> S1
-    [0, 0, 0, 0, 0],   # P4 -> (under assigned)
+    [0, 1, 0, 0, 0],   # Project 1 -> Staff 2
+    [0, 1, 0, 1, 0],   # Project 2 -> Staff 2, Staff 4 (over assigned)
+    [1, 0, 0, 0, 0],   # Project 3 -> Staff 1
+    [0, 0, 0, 0, 0],   # Project 4 -> (under assigned)
 ]
 ```
 
@@ -29,9 +29,9 @@ vector = [
 * `context.py` - context of situation (staff details, project details)
 * `simple_timer.py` - simple timer module
 
-*outputs*
+<!-- *outputs*
 * `genetic_graph.png` - graphical output showing the cost over each generation
-* `cost_distribution.png` - small graph to show distribution of random assignment vectors
+* `cost_distribution.png` - small graph to show distribution of random assignment vectors -->
 
 *misc*
 * .gitignore - git ignore file
