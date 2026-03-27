@@ -1,132 +1,73 @@
 import random, matplotlib.pyplot as plt
-from context import *
-from vector import printVector, randomVector, cloneVector, vectorCost as fitness
+from chromosome import Chromosome, tournament_selection
 
 
-POP_SIZE = 100
-GENERATIONS = 100
-
-MUTATION_PROB = 0.05
-
-
-##############################################################
-
-
-def mutate(child):
-    # flip a random staff assignment for a random project row
-    new_child = cloneVector(child)
-
-    # flip a random row
-    row = random.randrange(len(new_child))
-    new_child[row] = new_child[row][::-1]
-
-
-    # flip 2 random bits
-    for _ in range(2):
-        i = random.randrange(len(new_child))
-        j = random.randrange(len(new_child[0]))
-        new_child[i][j] ^= 1
-
-    return new_child
-
-
-##############################################################
-
-
-def crossover(parent_a, parent_b):
-    # combine two parents vectors
-    cross_point = random.randint(1, len(parent_a) - 2)
-
-    return cloneVector(parent_a[:cross_point]) + cloneVector(parent_b[cross_point:])
-
-
-##############################################################
-
-
-def tournament_selection(population, size=5):
-    """takes a random selection of the population (equal to size) and selects the best 2 (random shuffles outputing parents)"""
-    sample = random.sample(population, size)
-
-    parents = sorted(sample, key=lambda x: fitness(x))[:2]
-    parents = [cloneVector(p) for p in parents]
-
-    random.shuffle(parents)
-
-    return parents
-
-
-##############################################################
-
-
-def genetic_algorithm(generations=GENERATIONS, popSize=POP_SIZE, quickFinish=True, quiet=False):
+def genetic_algorithm(generations:int, pop_size:int, mutation_prob:float=0.05, graph:str='genetic_graph.png', quickFinish=True):
     '''
-    main genetic algorithm function. This returns the best solution found using global constant variables POP_SIZE and GENERATIONS. 
-    If quickFinish is enabled this will output when/if it reaches an optimal answer.
+    to disable graphing set the graph parameter to None or ''
+    quickFinish flag denotes whether this function should return the optimal answer once it is found or if it should go to n-generations even after the optimal solution is found
     '''
-    population = [randomVector(smart=False) for _ in range(popSize)]
-
+    population = [Chromosome() for i in range(generations)]
+    
     avg_costs = []
     best_costs = []
 
-    
-    gen = 0
+    generation = 0
     finish = False
-    while gen < generations and not finish:
-        # for graphing
-        costs = [fitness(i) for i in population]
-        avg_costs += [sum(costs) / len(costs)]
-        best_costs += [min(costs)]
-
+    while generation < generations and not finish:
+        if graph != None and graph != '':
+            costs = [i.getCost() for i in population]
+            avg_costs += [sum(costs) / len(costs)]
+            best_costs += [min(costs)]
+        
         new_population = []
 
         # ensure the best solution still goes on
-        best = min(population, key=lambda x: fitness(x))
-        new_population += [cloneVector(best)]
+        best = min(population, key=lambda x: x.getCost())
 
-        for _ in range(popSize - 1):
+        if best.getCost() == 0 and quickFinish:
+            finish = True
+
+        
+        new_population += [best.clone()]
+
+        for _ in range(pop_size - 1):
             p_a, p_b = tournament_selection(population)
-            child = crossover(p_a, p_b)
+            child = Chromosome.crossoverChild(p_a, p_b)
 
-            if random.random() <= MUTATION_PROB:
-                child = mutate(child)
+            if random.random() <= mutation_prob:
+                child.mutate()
 
             new_population += [child]
 
         
         population = new_population
-
-        if quickFinish:
-            if fitness(min(population, key=lambda x: fitness(x))) == 0:
-                finish = True
-                if not quiet:
-                    print(f'Quick finish after {gen} generations')
-
-        gen += 1
-
-            
-    # plot graph
-    plt.figure(figsize=(9, 5), dpi=400)
-    plt.plot(avg_costs, label="avg fitness")
-    plt.plot(best_costs, label="best fitness")
-    plt.title("Genetic algorithm")
-    plt.xlabel("generation")
-    plt.ylabel("fitness")
-    plt.legend()
-    plt.figtext(0.01, 0.015, f"({POP_SIZE=}, {GENERATIONS=})", fontsize=8, fontstyle="italic", color="dimgrey")
-    plt.savefig("genetic_graph.png")
-
-    return min(population, key=lambda x: fitness(x))
+        generation += 1
 
 
-##############################################################
+    if graph != None and graph != '':
+        plt.figure(figsize=(9, 5), dpi=400)
+        plt.plot(avg_costs, label="avg cost")
+        plt.plot(best_costs, label="best cost")
+        plt.title("Genetic algorithm")
+        plt.xlabel("generation")
+        plt.ylabel("cost")
+        plt.legend()
+        plt.figtext(0.01, 0.015, f"({pop_size=}, {generation=})", fontsize=8, fontstyle="italic", color="dimgrey")
+        plt.savefig(graph)
+
+    return min(population, key=lambda x: x.getCost())
 
 
-if __name__ == "__main__":
-    from simple_timer import global_timer
+if __name__ == '__main__':
+    import time
 
-    global_timer.start()
+    start = time.time()
+    answer = genetic_algorithm(500, 100)
+    end = time.time()
 
-    printVector(genetic_algorithm(), True)
+    print(answer)
+    print(answer.getCost())
 
-    global_timer.end()
-    print(global_timer)
+
+    print(end-start)
