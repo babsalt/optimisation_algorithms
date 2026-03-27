@@ -1,19 +1,27 @@
-# from genetic import genetic_algorithm, POP_SIZE, GENERATIONS
-# from vector import printVector, vectorCost
-# from simple_timer import global_timer
+import sys, time
+from genetic import genetic_algorithm
+from particle_swarm import particleSwarm
 
+start = time.time()
 
-# print(f'Starting genetic algorithm with\n  {POP_SIZE=}\n  {GENERATIONS=}')
-# print()
+if '-g' in sys.argv:
+    print('Genetic Algorithm')
 
-# global_timer.start()
-# out = genetic_algorithm()
-# global_timer.end()
+    print(genetic_algorithm(100, 100))
 
-# printVector(out, True)
+elif '-p' in sys.argv:
+    print('Particle Swarm')
 
-# if vectorCost(out) == 0:
-#     print('Perfect solution found')
-    
-# print()
-# print(global_timer)
+    print(particleSwarm(None, None)
+)
+
+else:
+    print('# No arguments given')
+    print(f'Usage: python {sys.argv[0]} [args]')
+    print('   -g   genetic algorithm')
+    print('   -p   particle swarm')
+    exit
+
+elapsed = time.time() - start
+
+print(f'{elapsed:.2f} Seconds')
