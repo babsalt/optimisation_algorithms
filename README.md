@@ -16,7 +16,7 @@ vector = [
 ```
 
 
-## Files
+<!-- ## Files
 
 *docs*
 * `README.md` - this file
@@ -27,14 +27,14 @@ vector = [
 * `genetic.py` - source code for genetic algorithm (evolving, mutation, crossover)
 * `vector.py` - vector representation of project-staff assignments (get cost, random vector, print vector)
 * `context.py` - context of situation (staff details, project details)
-* `simple_timer.py` - simple timer module
+* `simple_timer.py` - simple timer module -->
 
 <!-- *outputs*
 * `genetic_graph.png` - graphical output showing the cost over each generation
 * `cost_distribution.png` - small graph to show distribution of random assignment vectors -->
 
-*misc*
-* .gitignore - git ignore file
+<!-- *misc*
+* .gitignore - git ignore file -->
 
 
 ## Running this script
