@@ -1,6 +1,6 @@
 import sys, time
 from genetic import genetic_algorithm
-from particle_swarm import particleSwarm
+from particle import particleSwarm
 
 start = time.time()
 
@@ -20,7 +20,9 @@ else:
     print(f'Usage: python {sys.argv[0]} [args]')
     print('   -g   genetic algorithm')
     print('   -p   particle swarm')
-    exit
+    print()
+    print('eg: "python main.py -g"')
+    exit()
 
 elapsed = time.time() - start
 

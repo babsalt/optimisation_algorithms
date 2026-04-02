@@ -115,6 +115,8 @@ def fitness(particle, alfa, beta, delta, gamma):
 
     return alfa * overload + beta * skillMismatch + delta * difficultyViolation + gamma * deadlineViolation
 
-startTime = time.time()         
-print(particleSwarm(tasks, employees))
-print(f"Execution Time: {time.time() - startTime:.4f} seconds")
+
+if __name__ == '__main__':
+    startTime = time.time()         
+    print(particleSwarm(tasks, employees))
+    print(f"Execution Time: {time.time() - startTime:.4f} seconds")
